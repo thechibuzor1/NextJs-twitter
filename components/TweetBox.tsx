@@ -23,6 +23,8 @@ function TweetBox({ setTweets }: Props) {
   const [input, setInput] = useState<string>("");
   const [image, setImage] = useState<string>("");
 
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const [imageUrlBoxIsOpen, setImageUrlBoxIsOpen] = useState<boolean>(false);
 
   const postTweet = async () => {
@@ -53,7 +55,6 @@ function TweetBox({ setTweets }: Props) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("api_key", "777817583417589"); // Replace API key with your own Cloudinary key
-    formData.append("public_id", "sample_image");
     formData.append("upload_preset", uploadPreset); // Replace the preset name with your own
     const res = await axios.post(
       "https://api.cloudinary.com/v1_1/dw2c9ouk8/upload",
@@ -67,12 +68,15 @@ function TweetBox({ setTweets }: Props) {
     postTweet();
     setInput("");
     setImage("");
+    setImageUrl("");
     setImageUrlBoxIsOpen(false);
   };
   const addImageToTweet = (
     e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
     e.preventDefault();
+
+    if (imageUrl.length === 0) return;
     setImage(imageUrl);
     setImageUrlBoxIsOpen(false);
   };
