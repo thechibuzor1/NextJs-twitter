@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { Tweet, TweetBody } from "../typings";
 import { fetchTweets } from "../utils/fetchTweets";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 interface Props {
   setTweets: React.Dispatch<React.SetStateAction<Tweet[]>>;
@@ -17,10 +18,10 @@ interface Props {
 
 function TweetBox({ setTweets }: Props) {
   const { data: session } = useSession();
+  const uploadPreset = "ml_default";
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [input, setInput] = useState<string>("");
   const [image, setImage] = useState<string>("");
-
-  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [imageUrlBoxIsOpen, setImageUrlBoxIsOpen] = useState<boolean>(false);
 
@@ -46,6 +47,21 @@ function TweetBox({ setTweets }: Props) {
     return json;
   };
 
+  const uploadFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("api_key", "777817583417589"); // Replace API key with your own Cloudinary key
+    formData.append("public_id", "sample_image");
+    formData.append("upload_preset", uploadPreset); // Replace the preset name with your own
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/dw2c9ouk8/upload",
+      formData
+    );
+    setImageUrl(res.data.url);
+  };
+
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     postTweet();
@@ -57,11 +73,7 @@ function TweetBox({ setTweets }: Props) {
     e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
     e.preventDefault();
-
-    if (!imageInputRef.current?.value) return;
-
-    setImage(imageInputRef.current.value);
-    imageInputRef.current.value = "";
+    setImage(imageUrl);
     setImageUrlBoxIsOpen(false);
   };
 
@@ -105,10 +117,10 @@ function TweetBox({ setTweets }: Props) {
           {imageUrlBoxIsOpen && (
             <form className="mt-5 flex rounded-lg bg-twitter/80 py-2 px-4">
               <input
-                ref={imageInputRef}
+                onChange={uploadFileHandler}
                 className="flex-1 bg-transparent p-2 
                 text-white outline-none placeholder:text-white"
-                type="text"
+                type="file"
                 placeholder="Enter Image Url..."
               />
               <button
