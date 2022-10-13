@@ -16,9 +16,7 @@ import { toast } from "react-hot-toast";
 function Sidebar() {
   const { data: session } = useSession();
   useEffect(() => {
-    session
-      ? toast.success("Logged in")
-      : toast.error("Not Signed in. Click the account icon to sign in.");
+    !session && toast.error("Not Signed in. Click the account icon to sign in.");
   }, []);
 
   return (
