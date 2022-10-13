@@ -26,6 +26,7 @@ function Tweet({ tweet }: Props) {
     setComments(comments);
   };
   const postComment = async () => {
+    const commentToast = toast.loading("Posting Comment...");
     const commentInfo: CommentBody = {
       comment: input,
       tweetId: tweet._id,
@@ -41,7 +42,8 @@ function Tweet({ tweet }: Props) {
     const json = await result.json();
     const newTweets = await fetchComments(tweet._id);
     setComments(newTweets);
-    toast("Comment Added", {
+    toast.success("Comment Added", {
+      id: commentToast,
       icon: "😫",
     });
     return json;
@@ -49,12 +51,13 @@ function Tweet({ tweet }: Props) {
 
   useEffect(() => {
     refreshComments();
-  }, [postComment]);
+  }, []);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     postComment();
     setInput("");
     setCommentBox(false);
+    refreshComments();
   };
 
   return (

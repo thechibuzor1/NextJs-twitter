@@ -1,7 +1,6 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import Feed from "../components/Feed";
 import Sidebar from "../components/Sidebar";
@@ -18,9 +17,9 @@ const Home = ({ tweets }: Props) => {
   const { data: session } = useSession();
 
   useEffect(() => {
-    !session
-      ? toast.error("Not Signed in. Click the account icon to sign in.")
-      : toast.success("Logged in");
+    session
+      ? toast.success("Logged in")
+      : toast.error("Not Signed in. Click the account icon to sign in.");
   }, []);
 
   return (
