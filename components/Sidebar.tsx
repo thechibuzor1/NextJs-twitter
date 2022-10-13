@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SidebarRow from "./SidebarRow";
 import {
   HomeIcon,
@@ -11,9 +11,15 @@ import {
   UserIcon,
 } from "@heroicons/react/outline";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { toast } from "react-hot-toast";
 
 function Sidebar() {
   const { data: session } = useSession();
+  useEffect(() => {
+    session
+      ? toast.success("Logged in")
+      : toast.error("Not Signed in. Click the account icon to sign in.");
+  }, []);
 
   return (
     <div className="flex flex-col col-span-2 items-center px-4 md:items-start">
