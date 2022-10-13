@@ -49,7 +49,7 @@ function Tweet({ tweet }: Props) {
 
   useEffect(() => {
     refreshComments();
-  }, []);
+  }, [postComment]);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     postComment();
@@ -90,7 +90,13 @@ function Tweet({ tweet }: Props) {
       <div className="flex justify-between mt-5">
         <div
           className="flex cursor-pointer items-center space-x-3 text-gray-400"
-          onClick={() => session && setCommentBox(!commentBox)}
+          onClick={() =>
+            session
+              ? setCommentBox(!commentBox)
+              : toast("Sign in to Comment", {
+                  icon: "🤧",
+                })
+          }
         >
           <ChatAlt2Icon className="h-5 w-5" />
           <p>{comments.length}</p>

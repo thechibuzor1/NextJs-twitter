@@ -22,14 +22,13 @@ function TweetBox({ setTweets }: Props) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [input, setInput] = useState<string>("");
   const [image, setImage] = useState<string>("");
-
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [buttonText, setButtonText] = useState<string>("Add Image");
 
   const [imageUrlBoxIsOpen, setImageUrlBoxIsOpen] = useState<boolean>(false);
 
   const postTweet = async () => {
     const tweetInfo: TweetBody = {
-      text: input,
+      text: input.length !== 0 ? input : "",
       username: session?.user?.name || "Unkown User",
       profileImg: session?.user?.image || "https:///links.papareact.com/gll",
       image: image,
@@ -51,6 +50,7 @@ function TweetBox({ setTweets }: Props) {
 
   const uploadFileHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
+    setButtonText("Loading...");
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
@@ -61,6 +61,7 @@ function TweetBox({ setTweets }: Props) {
       formData
     );
     setImageUrl(res.data.url);
+    setButtonText("Submit");
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -111,7 +112,7 @@ function TweetBox({ setTweets }: Props) {
             </div>
             <button
               onClick={handleSubmit}
-              disabled={!input || !session}
+              disabled={!input && image.length === 0}
               className="bg-twitter px-5 py-2 font-bold
              text-white rounded-full disabled:opacity-40"
             >
@@ -130,9 +131,11 @@ function TweetBox({ setTweets }: Props) {
               <button
                 onClick={addImageToTweet}
                 type="submit"
-                className="font-bold text-white"
+                className={`font-bold ${
+                  buttonText === "Submit" && "text-green-200"
+                } text-white`}
               >
-                Add image
+                {buttonText}
               </button>
             </form>
           )}
